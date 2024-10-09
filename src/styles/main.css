@@ -1,0 +1,26 @@
+:root {
+  --base-space: 1.25rem;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family:
+    system-ui,
+    -apple-system,
+    sans-serif;
+  font-size: 100%;
+  padding: 0 var(--base-space);
+}
+
+.box {
+  border: 2px solid black;
+  padding: var(--base-space);
+  max-width: 300px;
+  aspect-ratio: 1 / 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
