@@ -43,6 +43,12 @@ const onResult = (event: SpeechRecognitionEvent) => {
   console.log({ event });
 
   const color = event.results[0][0].transcript;
+
+  if (color.length && box && colorName) {
+    box.style.backgroundColor = color;
+    colorName.textContent = '';
+    colorName.textContent = color;
+  }
 };
 
 recognition.onresult = onResult;
