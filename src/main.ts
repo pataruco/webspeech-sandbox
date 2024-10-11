@@ -1,39 +1,24 @@
 import { colors } from './colors';
-
-const speechRecognition =
-  window.SpeechRecognition ?? window.webkitSpeechRecognition;
-const speechGrammarList =
-  window.SpeechGrammarList ?? window.webkitSpeechGrammarList;
-
-const speechRecognitionList = new speechGrammarList();
-const recognition = new speechRecognition();
-
-// https://www.w3.org/TR/jsgf/
-const grammar = `#JSGF V1.0; grammar colors; public <color> = ${colors.join(' | ')} ;`;
-
-speechRecognitionList.addFromString(grammar, 1);
-recognition.grammars = speechRecognitionList;
-
-recognition.continuous = true;
-recognition.lang = 'en-GB';
-recognition.interimResults = false;
-recognition.maxAlternatives = 1;
+import { recognition } from './speech-recognition';
 
 const startRecognitionButton = document.querySelector(
-  'menu li button:first-of-type',
+  'menu li:first-of-type button',
 );
 
 const stopRecognitionButton = document.querySelector(
-  'menu li button:nth-of-type(2)',
+  'menu li:last-of-type button',
 );
 
 const box = document.querySelector('.box') as HTMLDivElement;
 const colorName = document.querySelector('.box span') as HTMLSpanElement;
+const recognitionStatus = document.querySelector(
+  '.recognition-status',
+) as HTMLSpanElement;
 
 if (startRecognitionButton) {
   startRecognitionButton.addEventListener('click', () => {
-    console.log('Start recognition');
     recognition.start();
+    recognitionStatus.classList.add('active');
   });
 }
 
@@ -41,6 +26,7 @@ if (stopRecognitionButton) {
   stopRecognitionButton.addEventListener('click', () => {
     console.log('Stop recognition');
     recognition.stop();
+    recognitionStatus.classList.remove('active');
   });
 }
 
@@ -58,13 +44,9 @@ const colorNotRecognised = () => {
 
 const getSanitisedTranscriptAndConfidence = (event: SpeechRecognitionEvent) => {
   const { results } = event;
-
   const lastResult = results[results.length - 1];
-
   const { confidence, transcript } = lastResult[0];
-
   const sanitisedTranscript = transcript.trim().toLowerCase().split(' ').pop();
-
   const colorExists =
     colors.includes(sanitisedTranscript || '') && confidence > 0.5;
 
@@ -99,3 +81,19 @@ recognition.onerror = (event) => {
   console.log("'onerror': Error occurred in recognition");
   console.error(event.error);
 };
+
+recognition.addEventListener('soundstart', (event) => {
+  console.log('soundstart', { event });
+});
+
+recognition.addEventListener('soundend', (event) => {
+  console.log('soundend', { event });
+});
+
+recognition.addEventListener('speechstart', (event) => {
+  console.log('soundstart', { event });
+});
+
+recognition.addEventListener('speechend', (event) => {
+  console.log('soundend', { event });
+});

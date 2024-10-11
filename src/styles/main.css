@@ -23,4 +23,31 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
+  margin-bottom: var(--base-space);
+}
+
+.row {
+  display: flex;
+  gap: var(--base-space);
+  align-items: center;
+}
+
+.recognition-status {
+  border: 2px solid green;
+  background-color: lightgreen;
+  animation: pulse 1s infinite linear alternate;
+  font-size: 0.75rem;
+  aspect-ratio: unset;
+  padding: 0.5rem;
+  display: none;
+}
+
+.recognition-status.active {
+  display: inline;
+}
+
+@keyframes pulse {
+  to {
+    transform: scale(1.1);
+  }
 }
