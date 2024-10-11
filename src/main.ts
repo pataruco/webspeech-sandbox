@@ -1,7 +1,12 @@
 import { colors } from './colors';
 
-const speechRecognitionList = new window.webkitSpeechGrammarList();
-const recognition = new window.webkitSpeechRecognition();
+const speechRecognition =
+  window.SpeechRecognition ?? window.webkitSpeechRecognition;
+const speechGrammarList =
+  window.SpeechGrammarList ?? window.webkitSpeechGrammarList;
+
+const speechRecognitionList = new speechGrammarList();
+const recognition = new speechRecognition();
 
 // https://www.w3.org/TR/jsgf/
 const grammar = `#JSGF V1.0; grammar colors; public <color> = ${colors.join(' | ')} ;`;
@@ -9,7 +14,7 @@ const grammar = `#JSGF V1.0; grammar colors; public <color> = ${colors.join(' | 
 speechRecognitionList.addFromString(grammar, 1);
 recognition.grammars = speechRecognitionList;
 
-recognition.continuous = false;
+recognition.continuous = true;
 recognition.lang = 'en-GB';
 recognition.interimResults = false;
 recognition.maxAlternatives = 1;
@@ -22,8 +27,8 @@ const stopRecognitionButton = document.querySelector(
   'menu li button:nth-of-type(2)',
 );
 
-const box = document.querySelector('.box');
-const colorName = document.querySelector('.box span');
+const box = document.querySelector('.box') as HTMLDivElement;
+const colorName = document.querySelector('.box span') as HTMLSpanElement;
 
 if (startRecognitionButton) {
   startRecognitionButton.addEventListener('click', () => {
@@ -39,15 +44,41 @@ if (stopRecognitionButton) {
   });
 }
 
+const renderColor = (color: string) => {
+  box.style.backgroundColor = color;
+  colorName.textContent = '';
+  colorName.textContent = color;
+};
+
+const colorNotRecognised = () => {
+  box.style.backgroundColor = 'transparent';
+  colorName.textContent = '';
+  colorName.textContent = 'Color not recognised';
+};
+
+const getSanitisedTranscriptAndConfidence = (event: SpeechRecognitionEvent) => {
+  const { results } = event;
+
+  const lastResult = results[results.length - 1];
+
+  const { confidence, transcript } = lastResult[0];
+
+  const sanitisedTranscript = transcript.trim().toLowerCase().split(' ').pop();
+
+  const colorExists =
+    colors.includes(sanitisedTranscript || '') && confidence > 0.5;
+
+  return { colorExists, transcript: sanitisedTranscript as string, confidence };
+};
+
 const onResult = (event: SpeechRecognitionEvent) => {
-  console.log({ event });
+  const { colorExists, transcript } =
+    getSanitisedTranscriptAndConfidence(event);
 
-  const color = event.results[0][0].transcript;
-
-  if (color.length && box && colorName) {
-    box.style.backgroundColor = color;
-    colorName.textContent = '';
-    colorName.textContent = color;
+  if (colorExists) {
+    renderColor(transcript);
+  } else {
+    colorNotRecognised();
   }
 };
 
@@ -68,18 +99,3 @@ recognition.onerror = (event) => {
   console.log("'onerror': Error occurred in recognition");
   console.error(event.error);
 };
-
-// recognition.onresult = (event) => {
-//   // The SpeechRecognitionEvent results property returns a SpeechRecognitionResultList object
-//   // The SpeechRecognitionResultList object contains SpeechRecognitionResult objects.
-//   // It has a getter so it can be accessed like an array
-//   // The first [0] returns the SpeechRecognitionResult at the last position.
-//   // Each SpeechRecognitionResult object contains SpeechRecognitionAlternative objects that contain individual results.
-//   // These also have getters so they can be accessed like arrays.
-//   // The second [0] returns the SpeechRecognitionAlternative at position 0.
-//   // We then return the transcript property of the SpeechRecognitionAlternative object
-//   // var color = event.results[0][0].transcript;
-//   // diagnostic.textContent = "Result received: " + color + ".";
-//   // bg.style.backgroundColor = color;
-//   // console.log("Confidence: " + event.results[0][0].confidence);
-// };
