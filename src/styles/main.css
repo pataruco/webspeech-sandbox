@@ -1,0 +1,53 @@
+:root {
+  --base-space: 1.25rem;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family:
+    system-ui,
+    -apple-system,
+    sans-serif;
+  font-size: 100%;
+  padding: 0 var(--base-space);
+}
+
+.box {
+  border: 2px solid black;
+  padding: var(--base-space);
+  max-width: 300px;
+  aspect-ratio: 1 / 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: var(--base-space);
+}
+
+.row {
+  display: flex;
+  gap: var(--base-space);
+  align-items: center;
+}
+
+.recognition-status {
+  border: 2px solid green;
+  background-color: lightgreen;
+  animation: pulse 1s infinite linear alternate;
+  font-size: 0.75rem;
+  aspect-ratio: unset;
+  padding: 0.5rem;
+  display: none;
+}
+
+.recognition-status.active {
+  display: inline;
+}
+
+@keyframes pulse {
+  to {
+    transform: scale(1.1);
+  }
+}

@@ -2,12 +2,40 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Vite + TS</title>
+    <title>WebSpeech API sandbox</title>
+    <link rel="stylesheet" href="/src/styles/index.css" />
   </head>
   <body>
-    <div id="app"></div>
+    <h1>WebSpeech API sandbox</h1>
+
+    <p>
+      In this sandbox we are listening for any CSS color name, defined
+      <a
+        href="https://developer.mozilla.org/en-US/docs/Web/CSS/named-color"
+        title="CSS color names"
+        >here</a
+      >
+    </p>
+    <p>
+      if you say a color name, the background color of the box will change to
+      that color
+    </p>
+
+    <p>Click the button and start speaking</p>
+
+    <div class="row">
+      <menu>
+        <li><button type="button">Start recognition</button></li>
+        <li><button type="button">Stop recognition</button></li>
+      </menu>
+      <span class="recognition-status">Recognising</span>
+    </div>
+
+    <div class="box">
+      <span> color </span>
+    </div>
+
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>
